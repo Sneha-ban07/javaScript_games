@@ -1,5 +1,7 @@
 let count = 0;
 let list = Array(10).fill(0);
+let t=1000;
+let win =0;
 function restart()
 {
     location.reload();
@@ -32,10 +34,13 @@ function addValue(n)
             computer(n);
         if(count>=5)
             checkWin('X');
-        if (count>2 && count<9)
-            if(!searchTwoZero())
-                if(!searchTwo(n,'X'))
-                    computerNext();
+        if(!checkWin('X'))
+        {   
+            if (count>2 && count<9)
+                if(!searchTwoZero())
+                    if(!searchTwo(n,'X'))
+                        computerNext();
+        }
     }
     else{
         alert("position is already filled");
@@ -76,7 +81,7 @@ function computer(n)
         let doc = document.getElementById(s2);
         setTimeout(function(){
             doc.innerText = 'O';
-        },1000);
+        },t);
         count+=1;
         list[Number(s2[1])]='O';
     } 
@@ -84,21 +89,24 @@ function computer(n)
 
 function computerNext()
 {
-    let remaining = [];
-    for(let i=1;i<=9;i++)
+    if(win==0)
     {
-        if(list[i]==0)
-            remaining.push(i)
+        let remaining = [];
+        for(let i=1;i<=9;i++)
+        {
+            if(list[i]==0)
+                remaining.push(i)
+        }
+        let j2 = remaining[Math.floor(Math.random()*remaining.length)];
+        j2 = 'b'+String(j2);
+        console.log(j2);
+        let doc = document.getElementById(j2);
+        setTimeout(function(){
+            doc.innerText = 'O';
+        },t);
+        count+=1;
+        list[Number(j2[1])]='O';
     }
-    let j2 = remaining[Math.floor(Math.random()*remaining.length)];
-    j2 = 'b'+String(j2);
-    console.log(j2);
-    let doc = document.getElementById(j2);
-    setTimeout(function(){
-        doc.innerText = 'O';
-    },1000);
-    count+=1;
-    list[Number(j2[1])]='O';
 }
 
 function checkWin(str)
@@ -122,10 +130,12 @@ function checkWin(str)
             document.getElementById('b'+String(val[0])).style.color = 'red';
             document.getElementById('b'+String(val[1])).style.color = 'red';
             document.getElementById('b'+String(val[2])).style.color = 'red';
-        },1000);
+        },t);
         if (str=='X')
         {
             console.log("Win");
+            t=4000;
+            win =1;
             setTimeout(function()
             {
                 document.getElementById('main').style.display = 'none';
@@ -144,95 +154,98 @@ function checkWin(str)
                 document.getElementById('data').innerHTML = '<h1>You lost</h1>';
             }, 2000);
         }
+        return 1;
     }
+    return 0;
 }
 
 function searchTwo(num, str)
 {
     let flag=0;
-    for(let i=0;i<condition.length;i++)
-    {
-        if(condition[i].includes(num))
+    if(win==0)
+        for(let i=0;i<condition.length;i++)
         {
-            let val = condition[i];
-            let index = val.indexOf(num);
-            if(index==0)
+            if(condition[i].includes(num))
             {
-                if(list[val[1]]==str && list[val[2]]!='O')
+                let val = condition[i];
+                let index = val.indexOf(num);
+                if(index==0)
                 {
-                    setTimeout(function()
+                    if(list[val[1]]==str && list[val[2]]!='O')
                     {
-                        document.getElementById('b'+String(val[2])).innerText = 'O';
-                    },1000);
-                    flag=1;
-                    list[val[2]]='O';
-                    condition.splice(i, 1)
-                    break;
+                        setTimeout(function()
+                        {
+                            document.getElementById('b'+String(val[2])).innerText = 'O';
+                        },t);
+                        flag=1;
+                        list[val[2]]='O';
+                        condition.splice(i, 1)
+                        break;
+                    }
+                    if(list[val[2]]==str && list[val[1]]!='O')
+                    {
+                        setTimeout(function()
+                        {
+                            document.getElementById('b'+String(val[1])).innerText = 'O';
+                        },t);
+                        flag=1;
+                        list[val[1]]='O';
+                        condition.splice(i, 1);
+                        break;
+                    }
                 }
-                if(list[val[2]]==str && list[val[1]]!='O')
+                else if(index==1)
                 {
-                    setTimeout(function()
+                    if(list[val[0]]==str && list[val[2]]!='O')
                     {
-                        document.getElementById('b'+String(val[1])).innerText = 'O';
-                    },1000);
-                    flag=1;
-                    list[val[1]]='O';
-                    condition.splice(i, 1);
-                    break;
+                        setTimeout(function()
+                        {
+                            document.getElementById('b'+String(val[2])).innerText = 'O';
+                        },t);
+                        flag=1;
+                        list[val[2]]='O';
+                        condition.splice(i, 1);
+                        break;
+                    }
+                    else if(list[val[2]]==str && list[val[0]]!='O')
+                    {
+                        setTimeout(function()
+                        {
+                            document.getElementById('b'+String(val[0])).innerText = 'O';
+                        },t);
+                        flag=1;
+                        list[val[0]]='O';
+                        condition.splice(i, 1);
+                        break;
+                    }
                 }
-            }
-            else if(index==1)
-            {
-                if(list[val[0]]==str && list[val[2]]!='O')
+                else if(index==2)
                 {
-                    setTimeout(function()
+                    if(list[val[1]]==str && list[val[0]]!='O')
                     {
-                        document.getElementById('b'+String(val[2])).innerText = 'O';
-                    },1000);
-                    flag=1;
-                    list[val[2]]='O';
-                    condition.splice(i, 1);
-                    break;
-                }
-                else if(list[val[2]]==str && list[val[0]]!='O')
-                {
-                    setTimeout(function()
+                        setTimeout(function()
+                        {
+                            document.getElementById('b'+String(val[0])).innerText = 'O';
+                        },t);
+                        list[val[0]]='O';
+                        flag=1
+                        condition.splice(i, 1);
+                        break;
+                    }
+                    else if(list[val[0]]==str && list[val[1]]!='O')
                     {
-                        document.getElementById('b'+String(val[0])).innerText = 'O';
-                    },1000);
-                    flag=1;
-                    list[val[0]]='O';
-                    condition.splice(i, 1);
-                    break;
-                }
-            }
-            else if(index==2)
-            {
-                if(list[val[1]]==str && list[val[0]]!='O')
-                {
-                    setTimeout(function()
-                    {
-                        document.getElementById('b'+String(val[0])).innerText = 'O';
-                    },1000);
-                    list[val[0]]='O';
-                    flag=1
-                    condition.splice(i, 1);
-                    break;
-                }
-                else if(list[val[0]]==str && list[val[1]]!='O')
-                {
-                    setTimeout(function()
-                    {
-                        document.getElementById('b'+String(val[1])).innerText = 'O';
-                    },1000);
-                    flag=1;
-                    list[val[1]]='O';
-                    condition.splice(i, 1);
-                    break;
+                        setTimeout(function()
+                        {
+                            document.getElementById('b'+String(val[1])).innerText = 'O';
+                        },t);
+                        flag=1;
+                        list[val[1]]='O';
+                        condition.splice(i, 1);
+                        break;
+                    }
                 }
             }
         }
-    }
     checkWin('O');
     if(flag==1)
     {   count+=1;
@@ -244,40 +257,41 @@ function searchTwo(num, str)
 function searchTwoZero()
 {
     let flag=0;
-    for(let i=0;i<condition.length;i++)
-    {
-        let val = condition[i];
-        if(list[val[0]]=='O' && list[val[1]]=='O' && list[val[2]]!='X')
+    if(win==0)
+        for(let i=0;i<condition.length;i++)
         {
-            setTimeout(function()
+            let val = condition[i];
+            if(list[val[0]]=='O' && list[val[1]]=='O' && list[val[2]]!='X')
             {
-                document.getElementById('b'+String(val[2])).innerText = 'O';
-            },1000);
-            flag=1;
-            list[val[2]]='O';
-            break;
+                setTimeout(function()
+                {
+                    document.getElementById('b'+String(val[2])).innerText = 'O';
+                },t);
+                flag=1;
+                list[val[2]]='O';
+                break;
+            }
+            else if(list[val[1]]=='O' && list[val[2]]=='O' && list[val[0]]!='X')
+            {
+                setTimeout(function()
+                {
+                    document.getElementById('b'+String(val[0])).innerText = 'O';
+                },t);
+                flag=1;
+                list[val[0]]='O';
+                break;
+            }
+            else if(list[val[0]]=='O' && list[val[2]]=='O' && list[val[1]]!='X')
+            {
+                setTimeout(function()
+                {
+                    document.getElementById('b'+String(val[1])).innerText = 'O';
+                },t);
+                flag=1;
+                list[val[1]]='O';
+                break;
+            }      
         }
-        else if(list[val[1]]=='O' && list[val[2]]=='O' && list[val[0]]!='X')
-        {
-            setTimeout(function()
-            {
-                document.getElementById('b'+String(val[0])).innerText = 'O';
-            },1000);
-            flag=1;
-            list[val[0]]='O';
-            break;
-        }
-        else if(list[val[0]]=='O' && list[val[2]]=='O' && list[val[1]]!='X')
-        {
-            setTimeout(function()
-            {
-                document.getElementById('b'+String(val[1])).innerText = 'O';
-            },1000);
-            flag=1;
-            list[val[1]]='O';
-            break;
-        }      
-    }
     checkWin('O');
     if(flag==1)
     {   
